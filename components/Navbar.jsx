@@ -7,7 +7,25 @@ import PetsIcon from '@mui/icons-material/Pets';
 import VolunteerActivismOutlinedIcon from '@mui/icons-material/VolunteerActivismOutlined';
 import ImportContactsOutlinedIcon from '@mui/icons-material/ImportContactsOutlined';
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import Link from "next/link";
+import { UserAuth } from "./context/AuthContext";
+import { useRouter } from "next/router";
+
+
 const Navbar = () => {
+
+  const {user,logOut}=UserAuth();
+  const router=useRouter()
+  const handleLogOut = (e)=>{
+    e.preventDefault();
+    try{
+      logOut()
+      router.push('/')
+    }catch(error){
+      console.log(error)
+    }
+  }
+
   return (
     <div className="w-full h-[50px] bg-white border-b z-50 sticky ">
       <div className="w-[1240px] mx-auto flex justify-between px-1 h-[50px]">
@@ -73,13 +91,23 @@ const Navbar = () => {
 
         {/* Right */}
 
-        <div className="flex">
+        {user?.email? (<div className="flex">
           <ul className="flex items-center text-[14px]">
             <li className="mx-2">
-              <a href="\">Sign Up</a>
+              <Link href="/">Account</Link>
             </li>
             <li  className="mx-2">
-              <a href="\signin">Sign In</a>
+              <button onClick={handleLogOut} href="/signIn">Logout</button>
+            </li>
+          </ul>
+        </div>):(
+          <div className="flex">
+          <ul className="flex items-center text-[14px]">
+            <li className="mx-2">
+              <Link href="/signUp">Sign Up</Link>
+            </li>
+            <li  className="mx-2">
+              <Link href="/signIn">Sign In</Link>
             </li>
             <li  className="mx-2">
               <a href="\">
@@ -88,6 +116,7 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
+        )}
       </div>
     </div>
   );

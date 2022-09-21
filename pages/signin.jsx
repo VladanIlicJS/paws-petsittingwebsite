@@ -1,9 +1,30 @@
+import Link from "next/link";
 import { borderRadius } from "@mui/system";
 import Image from "next/image";
-import React from "react";
-import GoogleButton from 'react-google-button'
+import React, { useContext, useState } from "react";
+import GoogleButton from "react-google-button";
+import { UserAuth } from "../components/context/AuthContext";
+import { Login } from "@mui/icons-material";
+import { useRouter } from "next/router";
+const SignIn = () => {
+  const [email,setEmail]=useState('')
+  const [error, setError]=useState('')
+  const [password,setPassword]=useState('')
+  const router=useRouter()
+  const {user,logIn}=UserAuth();
+  
+  const handleLogIn = async (e) => {
+    e.preventDefault()
+    try {
+      await logIn(email,password)
+      router.push('/')
+    }catch(error){
+      console.log(error)
+      setError(error.message)
+    }
+  }
 
-const signIn = () => {
+
   return (
     <div className="w-full">
       <div>
@@ -18,20 +39,49 @@ const signIn = () => {
       </div>
       <div className="w-[500px] bg-white h-[600px] absolute flex flex-col rounded-md p-5 items-center justify-between my-8 mx-[50px]">
         <h1 className=" text-4xl font-bold pb-8">Sign In to Paws</h1>
-        <GoogleButton style={{width:"400px",textAlign:"center"}}  onClick={() => { console.log('Google button clicked') }}/>
+        {error ? <p className="text-red-600">{error}</p> : ''}
+        <GoogleButton
+          style={{ width: "100%", margin: "20px 0", textAlign: "center" }}
+        />
+        <p className="text-gray-500">or login with </p>
+        <form className="w-full flex flex-col py-4">
+          <input
+          onChange={(e)=>setEmail(e.target.value)}
+            className="p-3 my-2 bg-gray-200 rounded-sm outline-none  "
+            type="email"
+            placeholder="Enter email"
+          />
+          <input
+          onChange={(e)=>setPassword(e.target.value)}
+            className="p-3 my-2 bg-gray-200 rounded-sm outline-none  "
+            type="password"
+            placeholder="Password"
+            autoComplete="current-password"
+          />
+          <button onClick={handleLogIn} className="w-full bg-green-500  hover:bg-green-400 duration-200 ease-in py-3 my-4 rounded-sm text-white">
+            Login
+          </button>
+          <div className="flex justify-between items-center text-sm text-gray-500">
+            <p><input type="checkbox" /> Remember me</p>
+            <p>Need Help?</p>
+          </div>
+        </form>
 
-        
         <div className="text-center py-5 text-blue-400">
-        <p className="text-center text-black py-4 "><small>By signing in or signing up, I agree to Paws.com&apos;s Terms of Service and Privacy Policy, confirm that I am 18 years of age or older, and consent to receiving email communication. This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.</small></p>
-        <a className="my-4"href="\">Forgot your Password?</a>
-        <hr className="w-[400px] my-5"/>
-        <p className="text-black">Don&apos;t have Paws Account? <a className=" text-blue-400" href="\">Sign up now</a></p>
+          <a className="my-4" href="\">
+            Forgot your Password?
+          </a>
+          <hr className="w-[400px] my-5" />
+          <p className="text-black">
+            Don&apos;t have Paws Account?{" "}
+            <Link className=" text-blue-400" href="\signUp">
+              Sign up now
+            </Link>
+          </p>
         </div>
-        
       </div>
-
     </div>
   );
 };
 
-export default signIn;
+export default SignIn;
